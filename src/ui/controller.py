@@ -15,8 +15,6 @@ del controller, no de los módulos de maths/graphs directamente.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import numpy as np
 import matplotlib.figure
 
@@ -41,9 +39,6 @@ from src.graphs.init import (
 )
 
 from .state import AppState
-
-# Ruta canónica del CSV  (src/data/weather.csv)
-_CSV_PATH = Path(__file__).parent.parent / "data" / "weather.csv"
 
 
 class BayesController:
@@ -71,13 +66,13 @@ class BayesController:
 
     # ── Carga de datos ────────────────────────────────────────────────────
 
-    def load_data(self) -> None:
+    def load_data(self, filepath: str) -> None:
         """
-        Carga y preprocesa weather.csv.
+        Carga y preprocesa el CSV indicado por el usuario.
         Actualiza state.df, state.schema, state.loaded.
         Lanza FileNotFoundError si el CSV no existe.
         """
-        loader = CsvDataLoader(_CSV_PATH)
+        loader = CsvDataLoader(filepath)
         result = DataPreprocessor(loader=loader).run()
 
         self._state.df     = result.df

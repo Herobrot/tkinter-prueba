@@ -94,5 +94,17 @@ class AppState:
 
     @property
     def all_target_candidates(self) -> list[str]:
-        """Columnas válidas como variable objetivo (binarias + numéricas)."""
-        return self.binary_cols + self.numeric_cols
+        """
+        Columnas válidas como variable objetivo.
+        Solo columnas binarias (0/1) son aceptadas por MarginalProbability.
+        Las numéricas se usan exclusivamente como evidencia.
+        """
+        return self.binary_cols
+
+    def compatible_evidence_cols(self, target: str) -> list[str]:
+        """
+        Devuelve todas las columnas numéricas como evidencia.
+        El target siempre es binario, por lo que toda columna numérica
+        es compatible. Las categóricas nunca se incluyen (sin umbral).
+        """
+        return list(self.numeric_cols)

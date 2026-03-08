@@ -182,6 +182,18 @@ class ComboRow(StyledFrame):
             bordercolor=T.surface2,
             arrowcolor=T.subtext,
         )
+        style.map(
+            "Dark.TCombobox",
+            fieldbackground=[("readonly", T.surface), ("disabled", T.panel)],
+            foreground=[("disabled", T.disabled)],
+            background=[("readonly", T.surface)],
+        )
+        # El listbox desplegable no es ttk — se estiliza con option_add
+        parent.option_add("*TCombobox*Listbox.background",   T.surface)
+        parent.option_add("*TCombobox*Listbox.foreground",   T.text)
+        parent.option_add("*TCombobox*Listbox.selectBackground", T.blue)
+        parent.option_add("*TCombobox*Listbox.selectForeground", T.bg)
+        parent.option_add("*TCombobox*Listbox.font",         T.font_sm)
 
         self._combo = ttk.Combobox(
             self,
@@ -199,6 +211,10 @@ class ComboRow(StyledFrame):
 
     def get(self) -> str:
         return self.var.get()
+
+    def set_enabled(self, enabled: bool) -> None:
+        """Habilita o deshabilita el Combobox."""
+        self._combo.configure(state="readonly" if enabled else "disabled")
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -240,7 +256,7 @@ class SliderRow(StyledFrame):
         ).pack(side=tk.RIGHT)
 
         self.var = tk.IntVar(value=initial)
-        tk.Scale(
+        self._scale = tk.Scale(
             self,
             variable=self.var,
             from_=from_, to=to,
@@ -251,10 +267,15 @@ class SliderRow(StyledFrame):
             highlightthickness=0,
             showvalue=False,
             length=260,
-        ).pack(padx=T.pad_md, pady=(0, T.pad_sm))
+        )
+        self._scale.pack(padx=T.pad_md, pady=(0, T.pad_sm))
 
     def get(self) -> int:
         return self.var.get()
+
+    def set_enabled(self, enabled: bool) -> None:
+        """Habilita o deshabilita el widget Scale interno."""
+        self._scale.configure(state=tk.NORMAL if enabled else tk.DISABLED)
 
     def set_display_value(self, value: float, unit: str = "") -> None:
         self._display_var.set(f"{value:.2f}{unit}")
